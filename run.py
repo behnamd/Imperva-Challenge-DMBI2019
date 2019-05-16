@@ -7,13 +7,20 @@ def main():
     input_directory = "data/"
     input_file = "train_data.csv"
     full_path = input_directory + input_file
+
+    # read targeted file
     df = pd.read_csv(full_path)
 
-    training_percent = 0.8
-    training_df, test_df = split_training_and_test(training_percent, df)
+    df = df.fillna(-1)
+    df.replace(False, 0, inplace=True)
+    df.replace(True, 1, inplace=True)
 
-    training_df.to_csv(input_directory + "training.csv")
-    test_df.to_csv(input_directory + "test.csv")
+    # split to train and test
+    training_percent = 0.8
+    (x_train, y_train), (x_test, y_test) = split_training_and_test(training_percent, df)
+
+    x_train.to_csv(input_directory + "training.csv")
+    x_test.to_csv(input_directory + "test.csv")
 
     print("Done!!")
 
@@ -21,10 +28,13 @@ def main():
 
 
 def split_training_and_test(training_percent, df):
-    training_df = df.sample(frac=training_percent)
-    test_df = df[~df.index.isin(training_df.index)]
+    x_train = df.sample(frac=training_percent)
+    x_test = df[~df.index.isin(x_train.index)]
 
-    return training_df, test_df
+    y_train = x_train["user.id"]
+    y_test = x_test["user.id"]
+
+    return (x_train, y_train), (x_test, y_test)
 
 def calculate_f1(actual, predictions):
     f1 = f1_score(actual, predictions)
