@@ -2,13 +2,12 @@
 # -*- coding: utf-8 -*-
 """Data handling to create triplets."""
 import numpy as np
-from keras.preprocessing.image import ImageDataGenerator
 
 
 class TripletStream:
     def __init__(self, streams, batch_size):
         self.classes = [c for c in streams]
-        self.streams = streams
+        self.keras_preprocessing = streams
         self.batch_size = batch_size
         self.buffers = {c: [] for c in streams}
 
@@ -68,7 +67,7 @@ class TripletGenerator:
             indices = {c: np.where(y == c)[0] for c in classes}
 
         streams = {
-            c: self.gen.flow(
+            c: flow(
                 x[matching_indices, :],
                 y[matching_indices, :],
                 batch_size=batch_size
@@ -77,4 +76,13 @@ class TripletGenerator:
 
         return TripletStream(streams, batch_size)
 
+def chunks(l, n):
+    # For item i in a range that is a length of l,
+    for i in range(0, len(l), n):
+        # Create an index range for l of n items:
+        yield l[i:i + n]
 
+    
+def flow(x,y ,batch_size):
+    yield chunks(x, batch_size), chunks(y, batch_size)
+    
