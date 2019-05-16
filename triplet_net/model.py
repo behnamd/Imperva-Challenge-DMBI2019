@@ -3,19 +3,16 @@
 """Model file."""
 import numpy as np
 from keras.models import Model
-from keras.layers import Input, Dense, Flatten, Dropout, Lambda
+from keras.layers import Input, Dropout
 from keras.layers.advanced_activations import LeakyReLU
 from keras.layers import Activation, MaxPooling1D, GlobalMaxPooling1D
-from keras.layers import concatenate
-from keras.layers.merge import add
-from keras.layers.core import Lambda
 from keras.layers.convolutional import Conv1D
 from triplet_net.custom_layers import subtract,norm
 
 
 class TripletNet:
 
-    def __init__(self, shape=(32, 32, 3), dimensions=128):
+    def __init__(self, shape=(32,  1), dimensions=128):
         self.model = self.build_triplets_model(shape, dimensions)
         self.model.compile(
             loss='mean_squared_error',
@@ -85,5 +82,5 @@ class TripletNet:
 
 
 if __name__ == '__main__':
-    t = TripletNet(shape=(32, 32, 3), dimensions=128)
+    t = TripletNet(shape=(32, 1), dimensions=128)
     t.model.summary()
