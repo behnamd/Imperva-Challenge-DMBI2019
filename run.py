@@ -51,7 +51,7 @@ def ent(data):
 
 
 def remove_lower_entropy(x_train, input_directory):
-    cols = list(x_train.columns)
+    cols = list(x_train.columns)ent
     entropies = []
     for column in cols:
         series = x_train[column]
