@@ -31,12 +31,21 @@ def main():
 
 
 
+def load_data(path='train_data.csv',training_percent=0.8):
+    df = pd.read_csv(path)
+    df = df.fillna(-1)
+    df.replace(False, 0, inplace=True)
+    df.replace(True, 1, inplace=True)
+    (x_train, y_train), (x_test, y_test) = split_training_and_test(training_percent, df)
+    return (x_train.values, y_train.values), (x_test.values, y_test.values)
+
 
 
 
 def split_training_and_test(training_percent, df):
     x_train = df.sample(frac=training_percent)
     x_test = df[~df.index.isin(x_train.index)]
+
 
     y_train = x_train.pop("user.id")
     y_test = x_test.pop("user.id")
