@@ -5,12 +5,12 @@ import numpy as np
 from keras.models import Model
 from keras.layers import Input, Dense, Flatten, Dropout, Lambda
 from keras.layers.advanced_activations import LeakyReLU
-from keras.layers import Activation, MaxPooling2D, GlobalMaxPooling2D
+from keras.layers import Activation, MaxPooling1D, GlobalMaxPooling1D
 from keras.layers import concatenate
 from keras.layers.merge import add
 from keras.layers.core import Lambda
-from keras.layers.convolutional import Conv2D
-from custom_layers import subtract, norm
+from keras.layers.convolutional import Conv1D
+from triplet_net.custom_layers import subtract,norm
 
 
 class TripletNet:
@@ -67,16 +67,16 @@ class TripletNet:
         x = self.convolutional_layer(256, kernel_size=3)(x)
 
         # 1 Final Conv to get into 128 dim embedding
-        x = Conv2D(dimensions, kernel_size=2, padding='same')(x)
-        x = GlobalMaxPooling2D()(x)
+        x = Conv1D(dimensions, kernel_size=2, padding='same')(x)
+        x = GlobalMaxPooling1D()(x)
 
         out = x
         return Model(inputs=inp, outputs=out)
 
     def convolutional_layer(self, filters, kernel_size):
         def _layer(x):
-            x = Conv2D(filters, kernel_size=kernel_size, padding='same')(x)
-            x = MaxPooling2D(pool_size=2)(x)
+            x = Conv1D(filters, kernel_size=kernel_size, padding='same')(x)
+            x = MaxPooling1D(pool_size=2)(x)
             x = LeakyReLU(alpha=0.3)(x)
             x = Dropout(0.25)(x)
             return x
